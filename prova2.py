@@ -60,7 +60,7 @@ with open("annotazioni.txt", "r") as file:
 
 
 def main():
-    image = cv2.imread("images/png/Screenshot_20231107_204016_Candy Crush Saga.png", cv2.IMREAD_COLOR)
+    image = cv2.imread("images/Validation/ipad6.png", cv2.IMREAD_COLOR)
 
     max_image_width = 1000
     if image is None:
@@ -87,9 +87,9 @@ def main():
         "green_candy.png": {"label": "G"},
         "G_trasssoo.png": {"label": "Gt"},
         "green_gela.png": {"label": "Gg"},
-        "gren_candy_liqui_grey copia.png": {"label": "Glg"},
-        "green_liqui_trasp.png": {"label": "Glt"},
-        "green_liqui_normal.png": {"label": "Gln"},
+        "Glg.png": {"label": "Glg"},
+        "Glt.png": {"label": "Glt"},
+        "Gln.png": {"label": "Gln"},
         "green_crystal.png": {"label": "GC"},
         "green_stri.png": {"label": "GS"},
         "gren_stri_gela.png": {"label": "GSG"},
@@ -112,6 +112,7 @@ def main():
         "purple_liqui_trasp.png":{"label":"PlT"},
         "purple_liqui_normal.png":{"label":"PlN"},
         "purple_wrap.png":{"label":"Pw"},
+        "purp_strip_transp.png":{"label":"PST"},
         "purple_wrap_transp.png":{"label":"PwT"},
         "purp_crystal.png":{"label":"PC"},
         "purp_stri.png":{"label":"PS"},
@@ -149,6 +150,7 @@ def main():
                 print(f"Errore nel caricamento del template: {template_path}")
                 continue
             label = template_info[filename]["label"]
+            print(label)
             target_count = annotations.get(label, 0)
             current_threshold = 0.8
             temp_label = ""

@@ -1,0 +1,17 @@
+P:8
+Pt:3
+Pg:3
+O:9
+Ot:5
+Og:3
+R:8
+Rg:2
+G:5
+B:6
+Gg:3
+Gt:5
+Bg:2
+Bt:3
+GSG:1
+PSG:1
+MT:13
