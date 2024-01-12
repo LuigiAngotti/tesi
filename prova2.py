@@ -60,7 +60,7 @@ with open("annotazioni.txt", "r") as file:
 
 
 def main():
-    image = cv2.imread("images/Validation/ipad6.png", cv2.IMREAD_COLOR)
+    image = cv2.imread("images/Validation/IMG_7695.PNG", cv2.IMREAD_COLOR)
 
     max_image_width = 1000
     if image is None:
@@ -83,6 +83,7 @@ def main():
         "blu_liqui_wrap_trasp.png":{"label":"blWT"},
         "blu_wrap_transp_liqui.png":{"label":"BwtL"},
         "blue_stii.png":{"label":"bS"},
+        "Blue_strip_V.png":{"label":"bSV"},
         "blue_strip_liqui_transp.png":{"label":"bSlT"},
         "green_candy.png": {"label": "G"},
         "G_trasssoo.png": {"label": "Gt"},
@@ -94,16 +95,19 @@ def main():
         "green_stri.png": {"label": "GS"},
         "gren_stri_gela.png": {"label": "GSG"},
         "green_wrap_transp.png": {"label": "GWT"},
+        "Green_wrap_cristal.png": {"label": "GWC"},
         "green_wrap.png": {"label": "GW"},
         "orange_candy.png": {"label": "O"},
         "orange_trasp2.png": {"label": "Ot"},
         "orange_gela.png": {"label": "Og"},
         "orange_liqui_gray.png": {"label": "Olg"},
         "orange_liqui_trasp.png": {"label": "Olt"},
-        "orange_wrap.png": {"label": "Ow"},
+        "Orange_wrap.png": {"label": "Ow"},
         "orange_wrap_transp.png": {"label": "OwT"},
+        "Orange_wrap_liqui_n.png": {"label": "OwL"},
         "orange_crystal.png": {"label": "OC"},
-        "orange_strip.png": {"label": "OS"},
+        "Orange_strip_vertical.png": {"label": "OSV"},
+        "Orange_strip_O.png": {"label": "OSO"},
         "orange_liqui_stri.png": {"label": "OLS"},
         "purp_candy.png": {"label": "P"},
         "P_gelatina.png": {"label": "Pg"},
@@ -116,6 +120,7 @@ def main():
         "purple_wrap_transp.png":{"label":"PwT"},
         "purp_crystal.png":{"label":"PC"},
         "purp_stri.png":{"label":"PS"},
+        "Purple_strip_vertical.png":{"label":"PSV"},
         "purpl_strip_gela.png":{"label":"PSG"},
         "purple_liqui_wrap.png":{"label":"PLW"},
 
@@ -125,8 +130,11 @@ def main():
         "green_liqui_gray.png": {"label": "gcl"},
 
         "red_tras.png": {"label": "Rt"},
+        "Red_strip.png": {"label": "RS"},
         "red_gela.png": {"label": "Rg"},
         "red_liqui_gray.png": {"label": "rlg"},
+        "red_wrap.png": {"label": "rW"},
+
         "liq.png": {"label": "L"},
         "liqui_transp.png": {"label": "Lt"},
         "liqui_gela.png": {"label": "LG"},

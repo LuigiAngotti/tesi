@@ -1,0 +1,7 @@
+Ot:1
+BStrip:1
+PSV:1
+G:9
+O:9
+P:9
+B:6

@@ -1,0 +1,43 @@
+ID,Label,Numero Caramelle Trovate,Confronto,Totale,Totale Aspettato,Differenza,Differenza totale
+E2FEACBC-CEC7-4FF8-95A6-0F550869838F,Gt,3,Corretto,80,79,,-1
+E2FEACBC-CEC7-4FF8-95A6-0F550869838F,Gg,3,Corretto,80,79,,-1
+E2FEACBC-CEC7-4FF8-95A6-0F550869838F,R,10,Corretto,80,79,,-1
+E2FEACBC-CEC7-4FF8-95A6-0F550869838F,Ot,4,Corretto,80,79,,-1
+E2FEACBC-CEC7-4FF8-95A6-0F550869838F,Rg,1,Corretto,80,79,,-1
+E2FEACBC-CEC7-4FF8-95A6-0F550869838F,Rt,2,Corretto,80,79,,-1
+E2FEACBC-CEC7-4FF8-95A6-0F550869838F,Pt,1,Corretto,80,79,,-1
+E2FEACBC-CEC7-4FF8-95A6-0F550869838F,Bg,2,Corretto,80,79,,-1
+E2FEACBC-CEC7-4FF8-95A6-0F550869838F,GSG,1,Errato,80,79,1,-1
+E2FEACBC-CEC7-4FF8-95A6-0F550869838F,G,11,Corretto,80,79,,-1
+E2FEACBC-CEC7-4FF8-95A6-0F550869838F,Bt,3,Corretto,80,79,,-1
+E2FEACBC-CEC7-4FF8-95A6-0F550869838F,Pg,1,Corretto,80,79,,-1
+E2FEACBC-CEC7-4FF8-95A6-0F550869838F,O,15,Corretto,80,79,,-1
+E2FEACBC-CEC7-4FF8-95A6-0F550869838F,P,9,Corretto,80,79,,-1
+E2FEACBC-CEC7-4FF8-95A6-0F550869838F,MT,4,Corretto,80,79,,-1
+E2FEACBC-CEC7-4FF8-95A6-0F550869838F,B,10,Corretto,80,79,,-1
+ID,Label,Numero Caramelle Trovate,Confronto,Totale,Totale Aspettato,Differenza,Differenza totale
+F0DA5F42-DF8A-462E-9FCC-AC683855E501,MC,20,Corretto,48,48,,0
+F0DA5F42-DF8A-462E-9FCC-AC683855E501,G,9,Corretto,48,48,,0
+F0DA5F42-DF8A-462E-9FCC-AC683855E501,O,5,Corretto,48,48,,0
+F0DA5F42-DF8A-462E-9FCC-AC683855E501,P,4,Corretto,48,48,,0
+F0DA5F42-DF8A-462E-9FCC-AC683855E501,GW,1,Corretto,48,48,,0
+F0DA5F42-DF8A-462E-9FCC-AC683855E501,B,9,Corretto,48,48,,0
+ID,Label,Numero Caramelle Trovate,Confronto,Totale,Totale Aspettato,Differenza,Differenza totale
+Screenshot_20231107_205337_Candy Crush Saga1,GlT,1,Corretto,59,59,,0
+Screenshot_20231107_205337_Candy Crush Saga1,PlN,1,Corretto,59,59,,0
+Screenshot_20231107_205337_Candy Crush Saga1,Olg,9,Corretto,59,59,,0
+Screenshot_20231107_205337_Candy Crush Saga1,PlT,2,Corretto,59,59,,0
+Screenshot_20231107_205337_Candy Crush Saga1,Gt,3,Corretto,59,59,,0
+Screenshot_20231107_205337_Candy Crush Saga1,GlG,6,Corretto,59,59,,0
+Screenshot_20231107_205337_Candy Crush Saga1,PlG,3,Corretto,59,59,,0
+Screenshot_20231107_205337_Candy Crush Saga1,Gg,2,Corretto,59,59,,0
+Screenshot_20231107_205337_Candy Crush Saga1,Olt,6,Corretto,59,59,,0
+Screenshot_20231107_205337_Candy Crush Saga1,Ot,2,Corretto,59,59,,0
+Screenshot_20231107_205337_Candy Crush Saga1,Og,4,Corretto,59,59,,0
+Screenshot_20231107_205337_Candy Crush Saga1,Pt,3,Corretto,59,59,,0
+Screenshot_20231107_205337_Candy Crush Saga1,Bg,2,Corretto,59,59,,0
+Screenshot_20231107_205337_Candy Crush Saga1,GSG,1,Corretto,59,59,,0
+Screenshot_20231107_205337_Candy Crush Saga1,G,2,Corretto,59,59,,0
+Screenshot_20231107_205337_Candy Crush Saga1,Bt,4,Corretto,59,59,,0
+Screenshot_20231107_205337_Candy Crush Saga1,Pg,6,Corretto,59,59,,0
+Screenshot_20231107_205337_Candy Crush Saga1,Blt,2,Corretto,59,59,,0

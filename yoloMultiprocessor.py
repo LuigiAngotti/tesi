@@ -2,13 +2,14 @@ import cv2
 import os
 import numpy as np
 import csv
+import multiprocessing
 import time
+from functools import partial
+
 def scale_image(image, scale):
     return cv2.resize(image, None, fx=scale, fy=scale)
 
-# Funzione per salvare i dati in un file CSV
 def save_to_csv(file_path, data, caramelle_da_file, total_found, total_expected, photo_id):
-    # Aggiungi una riga al CSV
     with open(file_path, 'a', newline='') as csvfile:
         fieldnames = ['ID', 'Label', 'Numero Caramelle Trovate', 'Confronto', 'Totale', 'Totale Aspettato', 'Differenza','Differenza totale']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -50,30 +51,46 @@ def perform_template_matching(image, template, label, threshold_small, threshold
                     x1, y1 = pt
                     x2, y2 = x1 + template.shape[1], y1 + template.shape[0]
                     scaled_coords = (int(x1 / scale), int(y1 / scale), int(x2 / scale), int(y2 / scale))
-                    #cv2.rectangle(scaled_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                    #cv2.putText(scaled_image, f"{label} (Scale {scale:.1f}) (th {threshold_large:.3f})", (x1, y1 - 3), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-
-                    #cv2.imshow("Resized Image with Matching", scaled_image)
-                    #cv2.waitKey(100)
                     found_matches.append((scaled_coords, label, scale, threshold))
             except cv2.error as e:
                 print(f"Error: {e}")
 
     return found_matches
 
+def worker_process(template_info_tuple, image):
+    filename, template_info = template_info_tuple
+    label = template_info["label"]
+    threshold_small = template_info["threshold_small"]
+    threshold_large = template_info["threshold_large"]
+
+    template_path = os.path.join("templates", filename)
+    template = cv2.imread(template_path, cv2.IMREAD_COLOR)
+
+    if template is None:
+        print(f"Error loading template: {template_path}")
+        return []
+
+    if template.shape[0] > image.shape[0] or template.shape[1] > image.shape[1]:
+        template = cv2.resize(template, (image.shape[1], image.shape[0]))
+
+    matches = perform_template_matching(image, template, label, threshold_small, threshold_large)
+
+    return matches
+
 def main():
-    #image = cv2.imread("images/Validation/1DCE231C-4D25-4BDE-A28A-B891DB52ADE4.png", cv2.IMREAD_COLOR)
+
     image_path = "images/Validation/IMG_7695.PNG"
     image = cv2.imread(image_path, cv2.IMREAD_COLOR)
     photo_id = os.path.basename(image_path).split('.')[0]
     max_image_width = 1000
+
     if image is None:
-        print("Errore nel caricamento dell'immagine.")
+        print("Error loading the image.")
         return
 
-    print(image.shape[:2])
     caramelle_utente = int(input("Inserisci il numero di caramelle: "))
     start_time = time.time()
+
     template_folder = "templates"
     template_info = {
         "blue_candy copia.png": {"label": "B",'threshold_small':0.8,"threshold_large":0.773},
@@ -149,31 +166,22 @@ def main():
         "red_wrap.png": {"label": "Rw",'threshold_small':0.8,"threshold_large": 0.8180000000000001},
     }
 
+    template_info_list = [(filename, template_info) for filename, template_info in template_info.items()]
+    num_processes = min(multiprocessing.cpu_count(), len(template_info_list))
+    pool = multiprocessing.Pool(processes=num_processes)
+
+    results = pool.starmap(worker_process, [(info, image) for info in template_info_list])
+
+    pool.close()
+    pool.join()
+
+
+    all_points = [point for result in results for point in result]
+    all_points.sort(key=lambda x: x[3], reverse=True)
+
     caramelle_per_label = {}
     matched_points = set()
     caramelle_label_position = {}
-    all_points = []
-
-    for filename in os.listdir(template_folder):
-        if filename.endswith(".png") and filename in template_info:
-            template_path = os.path.join(template_folder, filename)
-            template = cv2.imread(template_path, cv2.IMREAD_COLOR)
-
-            if template is None:
-                print(f"Errore nel caricamento del template: {template_path}")
-                continue
-
-            label = template_info[filename]["label"]
-            threshold_small = template_info[filename]["threshold_small"]
-            threshold_large = template_info[filename]["threshold_large"]
-
-            if template.shape[0] > image.shape[0] or template.shape[1] > image.shape[1]:
-                template = cv2.resize(template, (image.shape[1], image.shape[0]))
-
-            found_matches = perform_template_matching(image, template, label, threshold_small, threshold_large)
-            all_points.extend(found_matches)
-
-    all_points.sort(key=lambda x: x[3], reverse=True)  # Sort by threshold in descending order
 
     for item in all_points:
         (x1, y1, x2, y2), label, scale, threshold = item
@@ -202,10 +210,10 @@ def main():
     for (x1, y1, x2, y2), label, scale, threshold in caramelle_label_position.values():
         # Draw rectangles on the image
         cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        cv2.putText(image, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+        cv2.putText(image, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
     caramelle_da_file = {}
-    for line in open('images/Validation/A2A6F416-CA20-4931-A68E-2AA97CE29F94.txt'):
+    for line in open('images/Validation/Screenshot_20231107_205337_Candy Crush Saga1.txt'):
         line = line.strip()
         if ':' in line:
             label, num_caramelle = line.split(':')
@@ -246,6 +254,7 @@ def main():
     print(f"Elapsed Time: {elapsed_time} seconds")
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+
 
 if __name__ == "__main__":
     main()

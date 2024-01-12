@@ -1,0 +1,17 @@
+GlT:3
+Olg:1
+PlT:3
+GlN:1
+Gt:3
+GlG:1
+Gg:2
+Olt:3
+Ot:1
+Pt:2
+Bg:3
+G:3
+Bt:3
+O:3
+MK:10
+Blt:5
+B:2
