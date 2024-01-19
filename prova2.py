@@ -60,7 +60,7 @@ with open("annotazioni.txt", "r") as file:
 
 
 def main():
-    image = cv2.imread("images/Validation/35E5D89F-F684-42CA-BA98-4DA12ACBD9CC.png", cv2.IMREAD_COLOR)
+    image = cv2.imread("images/Validation/IMG_7764.PNG", cv2.IMREAD_COLOR)
 
     max_image_width = 1000
     if image is None:

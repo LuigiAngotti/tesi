@@ -99,7 +99,7 @@ def worker_process(template_info_tuple, image):
 
 def main():
 
-    image_path = "images/Validation/Screenshot_20231107_205648_Candy Crush Saga1.png"
+    image_path = "images/Validation/IMG_7764.PNG"
     image = cv2.imread(image_path, cv2.IMREAD_COLOR)
     photo_id = os.path.basename(image_path).split('.')[0]
     max_image_width = 1000
@@ -114,7 +114,7 @@ def main():
     template_folder = "templates"
     template_info = {
         "blue_candy copia.png": {"label": "B",'threshold_small':0.8,"threshold_large":0.773},
-        "bluee_trasp.png": {"label": "Bt", 'threshold_small': 0.8, "threshold_large": 0.8250000000000001},
+        "bluee_trasp.png": {"label": "Bt", 'threshold_small': 0.8, "threshold_large": 0.8440000000000001},
         "blu_gela.png": {"label": "Bg", 'threshold_small': 0.7, "threshold_large": 0.8340000000000001},
         "green_candy.png": {"label": "G",'threshold_small':0.75,"threshold_large":0.8280000000000001},
         "G_trasssoo.png": {"label": "Gt",'threshold_small':0.8,"threshold_large":0.9310000000000002},
@@ -140,7 +140,7 @@ def main():
         "green_wrap.png": {"label": "GW",'threshold_small':0.85,"threshold_large":0.781},
         "green_wrap_transp.png": {"label": "GWT",'threshold_small':0.85,"threshold_large":0.8},
         "orange_candy.png": {"label": "O",'threshold_small':0.8,"threshold_large":0.8},
-        "orange_trasp2.png": {"label": "Ot",'threshold_small':0.9360000000000002,"threshold_large":0.8670000000000001},
+        "orange_trasp2.png": {"label": "Ot",'threshold_small':0.9360000000000002,"threshold_large":0.8740000000000001},
         "orange_gela.png": {"label": "Og",'threshold_small':0.8330000000000001,"threshold_large":0.8400000000000001},
         "orange_liqui_gray.png": {"label": "Olg",'threshold_small':0.796,"threshold_large":0.9380000000000002},
         "orange_liqui_trasp.png": {"label": "Olt",'threshold_small':0.8600000000000001,"threshold_large":0.8720000000000001},
@@ -169,11 +169,11 @@ def main():
         "liq.png":{"label": "L",'threshold_small': 0.76,"threshold_large":0.8520000000000001},
         "liqui_transp.png":{"label": "Lt",'threshold_small': 0.76,"threshold_large":0.807},#0.8690000000000001
         "liqui_crystal.png":{"label": "LK",'threshold_small': 0.76,"threshold_large":0.756},
-        "liqui_gela.png":{"label": "LG",'threshold_small': 0.76,"threshold_large":0.8550000000000001},
-        "meringa_c.png":{"label": "MC",'threshold_small': 0.76,"threshold_large": 0.9140000000000001},
+        "liqui_gela.png":{"label": "LG",'threshold_small': 0.76,"threshold_large":0.8620000000000001},
+        "meringa_c.png":{"label": "MC",'threshold_small': 0.76,"threshold_large": 0.9220000000000002},
         "meringa_crystal.png":{"label": "MK",'threshold_small': 0.76,"threshold_large":0.8},
         "meringa_transp.png":{"label": "MT",'threshold_small': 0.76,"threshold_large":0.8},
-        "meringa_liqui.png":{"label": "MT",'threshold_small': 0.76,"threshold_large":0.785},
+        "meringa_liqui.png":{"label": "MLi",'threshold_small': 0.76,"threshold_large":0.785},
         #"yellow_candy.png": {"label": "Y", "threshold_small": 0.9, "threshold_large": 0.95},
         "red_copiiaaa.png": {"label": "R",'threshold_small':0.8690000000000001,"threshold_large":0.8820000000000001},
         #"green_liqui_gray.png": {"label": "gcl", "threshold_small": 0.4, "threshold_large": 0.5359999999999998},
@@ -232,7 +232,7 @@ def main():
         cv2.putText(image, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
 
     caramelle_da_file = {}
-    for line in open('images/Validation/Screenshot_20231107_205648_Candy Crush Saga1.txt'):
+    for line in open('images/Validation/IMG_7764.txt'):
         line = line.strip()
         if ':' in line:
             label, num_caramelle = line.split(':')
