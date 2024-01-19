@@ -8,4 +8,4 @@ G:12
 R:11
 Rt:1
 BStrip:1
-OW:1
+Ow:1

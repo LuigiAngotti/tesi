@@ -4,41 +4,25 @@ import numpy as np
 import csv
 import multiprocessing
 import time
-from functools import partial
-
+def display_frame(frame):
+    cv2.imshow("Frame", frame)
+    key = cv2.waitKey(1)
+    if key & 0xFF == ord('q'):
+        cv2.destroyAllWindows()
+        exit()
 def scale_image(image, scale):
     return cv2.resize(image, None, fx=scale, fy=scale)
 
-
 def save_to_csv(file_path, data, caramelle_da_file, total_found, total_expected, photo_id):
     with open(file_path, 'a', newline='') as csvfile:
-        fieldnames = ['ID', 'Label', 'Numero Caramelle Trovate', 'Falsi Positivi', 'Falsi Negativi', 'Totale', 'Totale Aspettato', 'Differenza', 'Differenza totale','Caramelle Aspettate_per_Label']
+        fieldnames = ['ID', 'Label', 'Numero Caramelle Trovate', 'Confronto', 'Totale', 'Totale Aspettato', 'Differenza', 'Differenza totale']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-
-        # Se il file è vuoto, scrivi l'header
-        if csvfile.tell() == 0:
-            writer.writeheader()
-
+        writer.writeheader()
         for label, count in data.items():
             confronto = "Corretto" if label in caramelle_da_file and count == caramelle_da_file[label] else "Errato"
             difference = abs(count - caramelle_da_file.get(label, 0)) if confronto == "Errato" else None
             differenza_totale = total_expected - total_found
-
-            falsi_positivi = max(0, count - caramelle_da_file.get(label, 0))
-            falsi_negativi = max(0, caramelle_da_file.get(label, 0) - count)
-
-            writer.writerow({
-                'ID': photo_id,
-                'Label': label,
-                'Numero Caramelle Trovate': count,
-                'Falsi Positivi': falsi_positivi,
-                'Falsi Negativi': falsi_negativi,
-                'Totale': total_found,
-                'Totale Aspettato': total_expected,
-                'Differenza': difference,
-                'Differenza totale': differenza_totale,
-                'Caramelle Aspettate_per_Label': caramelle_da_file.get(label, 0)
-            })
+            writer.writerow({'ID': photo_id, 'Label': label, 'Numero Caramelle Trovate': count, 'Confronto': confronto, 'Totale': total_found, 'Totale Aspettato': total_expected, 'Differenza': difference, 'Differenza totale': differenza_totale})
 
 def perform_template_matching(image, template, label, threshold_small, threshold_large):
     found_matches = []
@@ -97,21 +81,93 @@ def worker_process(template_info_tuple, image):
 
     return matches
 
-def main():
+def process_frame(frame, photo_id, template_info_list):
+    try:
+        caramelle_per_label = {}
+        matched_points = set()
+        caramelle_label_position = {}
 
-    image_path = "images/Validation/Screenshot_20231107_205648_Candy Crush Saga1.png"
-    image = cv2.imread(image_path, cv2.IMREAD_COLOR)
-    photo_id = os.path.basename(image_path).split('.')[0]
-    max_image_width = 1000
+        num_processes = min(multiprocessing.cpu_count(), len(template_info_list))
+        pool = multiprocessing.Pool(processes=num_processes)
 
-    if image is None:
-        print("Error loading the image.")
+        results = pool.starmap(worker_process, [(info, frame) for info in template_info_list])
+
+        pool.close()
+        pool.join()
+
+        all_points = [point for result in results for point in result]
+        all_points.sort(key=lambda x: x[3], reverse=True)
+
+        for item in all_points:
+            (x1, y1, x2, y2), label, scale, threshold = item
+            x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+
+            overlapping = False
+            for point, existing_label, existing_scale, existing_threshold in caramelle_label_position.values():
+                px1, py1, px2, py2 = point
+
+                if (x1 < px2 and x2 > px1 and y1 < py2 and y2 > py1):
+                    overlapping = True
+
+                    if threshold > existing_threshold:
+                        caramelle_label_position.pop(point)
+                        matched_points.remove(point)
+                        caramelle_label_position[(x1, y1, x2, y2)] = ((x1, y1, x2, y2), label, scale, threshold)
+                        matched_points.add((x1, y1, x2, y2))
+
+                    break
+
+            if not overlapping:
+                matched_points.add((x1, y1, x2, y2))
+                caramelle_label_position[(x1, y1, x2, y2)] = ((x1, y1, x2, y2), label, scale, threshold)
+                caramelle_per_label[label] = caramelle_per_label.get(label, 0) + 1
+
+        for (x1, y1, x2, y2), label, scale, threshold in caramelle_label_position.values():
+            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            cv2.putText(frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
+
+        display_frame(frame)
+
+        return caramelle_per_label, matched_points
+
+    except Exception as e:
+        print(f"Error in processing frame {photo_id}: {e}")
+        return {}, set()
+
+# Rest of your code...
+
+def process_video(video_path, template_info_list, frame_rate=5):
+    cap = cv2.VideoCapture(video_path)
+
+    if not cap.isOpened():
+        print("Error opening video file.")
         return
 
-    caramelle_utente = int(input("Inserisci il numero di caramelle: "))
-    start_time = time.time()
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    frame_interval = int(fps * frame_rate)
 
-    template_folder = "templates"
+    frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    for i in range(0, frame_count, frame_interval):
+        # Set the frame position to the desired interval
+        cap.set(cv2.CAP_PROP_POS_FRAMES, i)
+        ret, frame = cap.read()
+
+        if not ret:
+            break
+
+        photo_id = f"Frame_{i + 1}"
+        caramelle_per_label, matched_points = process_frame(frame, photo_id, template_info_list)
+
+        # You can add any additional logic or processing for each frame here
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+
+def main():
+    video_path = "yt5s.io-Playing candy crash part 1 ipad-(1080p60).mp4"
+
     template_info = {
         "blue_candy copia.png": {"label": "B",'threshold_small':0.8,"threshold_large":0.773},
         "bluee_trasp.png": {"label": "Bt", 'threshold_small': 0.8, "threshold_large": 0.8250000000000001},
@@ -182,98 +238,11 @@ def main():
         "red_gela.png": {"label": "Rg",'threshold_small':0.8140000000000001,"threshold_large": 0.8640000000000001},
         "Red_strip.png": {"label": "RS",'threshold_small':0.8140000000000001,"threshold_large": 0.8640000000000001},
         "red_wrap.png": {"label": "Rw",'threshold_small':0.8,"threshold_large": 0.8180000000000001},
-        "magic.png": {"label": "MA",'threshold_small':0.8,"threshold_large": 0.8180000000000001},
     }
 
     template_info_list = [(filename, template_info) for filename, template_info in template_info.items()]
-    num_processes = min(multiprocessing.cpu_count(), len(template_info_list))
-    pool = multiprocessing.Pool(processes=num_processes)
 
-    results = pool.starmap(worker_process, [(info, image) for info in template_info_list])
-
-    pool.close()
-    pool.join()
-
-
-    all_points = [point for result in results for point in result]
-    all_points.sort(key=lambda x: x[3], reverse=True)
-
-    caramelle_per_label = {}
-    matched_points = set()
-    caramelle_label_position = {}
-
-    for item in all_points:
-        (x1, y1, x2, y2), label, scale, threshold = item
-        x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
-
-        overlapping = False
-        for point, existing_label, existing_scale, existing_threshold in caramelle_label_position.values():
-            px1, py1, px2, py2 = point
-
-            if (x1 < px2 and x2 > px1 and y1 < py2 and y2 > py1):
-                overlapping = True
-
-                if threshold > existing_threshold:
-                    caramelle_label_position.pop(point)
-                    matched_points.remove(point)
-                    caramelle_label_position[(x1, y1, x2, y2)] = ((x1, y1, x2, y2), label, scale, threshold)
-                    matched_points.add((x1, y1, x2, y2))
-
-                break
-
-        if not overlapping:
-            matched_points.add((x1, y1, x2, y2))
-            caramelle_label_position[(x1, y1, x2, y2)] = ((x1, y1, x2, y2), label, scale, threshold)
-            caramelle_per_label[label] = caramelle_per_label.get(label, 0) + 1
-
-    for (x1, y1, x2, y2), label, scale, threshold in caramelle_label_position.values():
-        # Draw rectangles on the image
-        cv2.rectangle(image, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        cv2.putText(image, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
-
-    caramelle_da_file = {}
-    for line in open('images/Validation/Screenshot_20231107_205648_Candy Crush Saga1.txt'):
-        line = line.strip()
-        if ':' in line:
-            label, num_caramelle = line.split(':')
-            label = label.strip()
-            num_caramelle = int(num_caramelle.strip())
-            caramelle_da_file[label] = num_caramelle
-
-    # Confronto e stampa delle informazioni sulle label
-    for label, cont in caramelle_per_label.items():
-        print(f"Label: {label}, Caramelle trovate: {cont}")
-        if label in caramelle_da_file:
-            if cont == caramelle_da_file[label]:
-                print(f"Il numero di caramelle per la label '{label}' coincide con il conteggio.")
-            else:
-                print(f"Attenzione: Il numero di caramelle per la label '{label}' non coincide. Hai trovato {cont}, ma il file dice {caramelle_da_file[label]}.")
-        else:
-            print(f"Attenzione: La label '{label}' trovata nel file non corrisponde a nessuna delle label rilevate nell'immagine.")
-
-    total_found = len(matched_points)
-    total_expected = sum(caramelle_da_file.values())
-
-    csv_file_path = 'risultati.csv'
-    header = ['ID', 'Label', 'Numero Caramelle Trovate', 'Confronto', 'Totale', 'Totale Aspettato']
-    header_written = os.path.exists(csv_file_path)
-
-    # Scrittura dell'header solo se il file non esiste
-    with open(csv_file_path, mode='a', newline='') as csv_file:
-        writer = csv.writer(csv_file)
-        if not header_written:
-            writer.writerow(header)
-
-        # Aggiorna il CSV per i confronti corretti
-    save_to_csv(csv_file_path, caramelle_per_label, caramelle_da_file, total_found, total_expected, photo_id)
-    cv2.putText(image, str(len(matched_points)), (80, 150), cv2.FONT_HERSHEY_SIMPLEX, 7, (255, 0, 0), 2)
-    image_large = cv2.resize(image, (1000, 1200))
-    cv2.imshow("Image with Matches", image_large)
-    elapsed_time = time.time() - start_time
-    print(f"Elapsed Time: {elapsed_time} seconds")
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
+    process_video(video_path, template_info_list)
 
 if __name__ == "__main__":
     main()

@@ -6,5 +6,6 @@ PSV:1
 OSO:2
 G:14
 Bt:1
+Bg:1
 P:12
 O:9

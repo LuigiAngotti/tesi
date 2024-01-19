@@ -1,7 +1,7 @@
 BStrip:1
 B:9
 P:7
-O:6
+O:7
 Pw:1
 G:5
 MC:11

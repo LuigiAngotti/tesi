@@ -1,6 +1,6 @@
-Gt:3
+Gt:2
 MC:2
-Gg:4
+Gg:5
 BwC:1
 Ot:2
 Og:1

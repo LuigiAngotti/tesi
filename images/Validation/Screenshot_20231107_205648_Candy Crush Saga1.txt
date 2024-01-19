@@ -2,9 +2,9 @@ GlT:3
 Olg:1
 PlT:3
 GlN:1
-Gt:3
+Gt:2
 GlG:1
-Gg:2
+Gg:3
 Olt:3
 Ot:1
 Pt:2
