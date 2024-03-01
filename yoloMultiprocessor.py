@@ -260,6 +260,7 @@ def main():
             print(f"Attenzione: La label '{label}' trovata nel file non corrisponde a nessuna delle label rilevate nell'immagine.")
 
     total_found = len(matched_points)
+    print(total_found)
     total_expected = sum(caramelle_da_file.values())
 
     csv_file_path = 'risultati.csv'
