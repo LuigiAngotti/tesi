@@ -36,7 +36,7 @@ def perform_template_matching(image, template, label, threshold):
                     x2, y2 = x1 + template.shape[1], y1 + template.shape[0]
                     scaled_coords = (int(x1 / scale), int(y1 / scale), int(x2 / scale), int(y2 / scale))
                     found_matches.append((scaled_coords, label, scale))
-                    #cv2.rectangle(scaled_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
+                    cv2.rectangle(scaled_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
                     #cv2.putText(scaled_image, f"{label} (Scale {scale:.1f})", (x1, y1 - 3), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
                     #cv2.imshow("Resized Image with Matching", scaled_image)
@@ -60,7 +60,7 @@ with open("annotazioni.txt", "r") as file:
 
 
 def main():
-    image = cv2.imread("images/Validation/IMG_7764.PNG", cv2.IMREAD_COLOR)
+    image = cv2.imread("images/Validation/IMG_0066.png", cv2.IMREAD_COLOR)
 
     max_image_width = 1000
     if image is None:
@@ -85,6 +85,7 @@ def main():
         "blue_stii.png":{"label":"bS"},
         "Blue_strip_V.png":{"label":"bSV"},
         "blue_strip_liqui_transp.png":{"label":"bSlT"},
+        "blue_orizzontal_strip.png":{"label":"bVS"},
         "green_candy.png": {"label": "G"},
         "G_trasssoo.png": {"label": "Gt"},
         "green_gela.png": {"label": "Gg"},
@@ -97,6 +98,7 @@ def main():
         "green_wrap_transp.png": {"label": "GWT"},
         "Green_wrap_cristal.png": {"label": "GWC"},
         "green_wrap.png": {"label": "GW"},
+        "green_oriz_strip.png":{"label":"GOS"},
         "orange_candy.png": {"label": "O"},
         "orange_trasp2.png": {"label": "Ot"},
         "orange_gela.png": {"label": "Og"},
@@ -171,7 +173,7 @@ def main():
                     (x1, y1, x2, y2), label, scale = item
                     x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
                     if temp_label != label:
-                        print("ciao")
+
                         caramelle_trovate = 0
                         temp_label = label
 
@@ -186,25 +188,23 @@ def main():
                         caramelle_dict[label].append((x1, y1, x2, y2, label, scale))
                         caramelle_trovate += 1
 
-                #print(label)
+
                 print(target_count)
                 print(caramelle_trovate)
                 print(current_threshold)
 
                 if caramelle_trovate == target_count:
-                    print("esco")
-                    print(label)
-                    print(current_threshold)
+
                     with open("thresholds.txt", "a") as file:
                         file.write(f"{label}: {current_threshold}\n")
 
                     break
                 elif caramelle_trovate < target_count:
-                    #print("minore")
+
                     caramelle_dict[label].clear()
                     current_threshold -= 0.001
                 elif caramelle_trovate > target_count:
-                    #print("maggiore")
+
                     caramelle_dict[label].clear()
                     current_threshold += 0.001
 

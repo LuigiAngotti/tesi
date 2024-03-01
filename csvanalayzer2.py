@@ -14,25 +14,21 @@ df_grouped = df.groupby('Label').agg({
     'Falsi Positivi': 'sum',
     'Falsi Negativi': 'sum',
     'Caramelle Aspettate_per_Label': 'sum',  # Somma totale atteso per ogni label
-    'ID': 'nunique'  # Conta il numero di ID unici per ogni label
+
 }).reset_index()
 
-# Calcola le percentuali di falsi positivi e falsi negativi per ogni label rispetto al totale atteso
-#df_grouped['Percentuale Falsi Positivi'] = (df_grouped['Falsi Positivi'] / df_grouped['Caramelle Aspettate_per_Label']) * 100
-#df_grouped['Percentuale Falsi Negativi'] = (df_grouped['Falsi Negativi'] / df_grouped['Caramelle Aspettate_per_Label']) * 100
-# Calcola le percentuali di falsi positivi e falsi negativi solo se Totale Aspettato non è zero
-#print(f" {df_grouped['Caramelle Aspettate_per_Label']}")
+
 df_grouped['Percentuale Falsi Positivi'] = np.where(df_grouped['Caramelle Aspettate_per_Label'] != 0,
                                                     (df_grouped['Falsi Positivi'] / (df_grouped['Caramelle Aspettate_per_Label'] +df_grouped['Falsi Positivi'])) ,
                                                     0)
-print(df_grouped['Falsi Positivi'])
-print()
+
 df_grouped['Percentuale Falsi Negativi'] = np.where(df_grouped['Caramelle Aspettate_per_Label'] != 0,
                                                     (df_grouped['Falsi Negativi'] / (df_grouped['Caramelle Aspettate_per_Label']+df_grouped['Falsi Negativi'])),
                                                0)
 
+print(df_grouped['Label'])
+print(df_grouped['Caramelle Aspettate_per_Label'])
 
-print(df_grouped['Percentuale Falsi Positivi'])
 #df_grouped.replace([np.inf, -np.inf], np.nan, inplace=True)
 
 # Sostituisci i valori NaN con 0
